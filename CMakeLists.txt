@@ -37,3 +37,25 @@ if(MSVC)
     target_compile_options(BilateralMeshDenoiser PRIVATE /W3)
     set_property(TARGET BilateralMeshDenoiser PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 endif()
+
+# 새로운 실행 파일: TemporalMeshDenoiser
+add_executable(TemporalMeshDenoiser src/TemporalMeshDenoiser.cpp)
+
+# Alembic 라이브러리 링크
+target_link_libraries(TemporalMeshDenoiser PRIVATE Alembic::Alembic)
+
+# Windows에서 필요한 추가 라이브러리
+if(WIN32)
+    target_link_libraries(TemporalMeshDenoiser PRIVATE ws2_32)
+endif()
+
+# OpenMP 지원
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(TemporalMeshDenoiser PRIVATE OpenMP::OpenMP_CXX)
+endif()
+
+# 디버그 정보 포함
+if(MSVC)
+    target_compile_options(TemporalMeshDenoiser PRIVATE /W3)
+    set_property(TARGET TemporalMeshDenoiser PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+endif()
