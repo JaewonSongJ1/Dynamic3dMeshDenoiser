@@ -69,56 +69,108 @@ dynamic_3dmesh_denoiser/
 - **Best for**: Quick denoising, preview workflows, light touch-ups
 - **Performance**: 24K vertices × 1620 frames in ~0.8 seconds
 
-## 🛠️ Installation
+🚀 Installation & Build
+Prerequisites
 
-### Prerequisites
-- **Visual Studio 2019+** (Windows) or **GCC 7+** / **Clang 8+** (Linux/macOS)
-- **CMake 3.16+**
-- **vcpkg** (for dependency management)
-- **Git**
+Windows 10/11 (64-bit) or Linux/macOS
+Visual Studio 2022 (Windows) or GCC 7+/Clang 8+ (Linux/macOS)
+CMake 3.16+
+vcpkg (for dependency management)
+Git
 
-### Windows Installation
-```bash
-# 1. Clone the repository
+Environment Setup
+Important: Set VCPKG_ROOT environment variable before building.
+Method 1: System Environment Variable (Recommended)
+
+Windows + R → sysdm.cpl → Enter
+"Advanced" Tab → "Environment Variables"
+Add System Variable: VCPKG_ROOT=C:\vcpkg
+
+Method 2: Current Session
+bashset VCPKG_ROOT=C:\vcpkg
+Build Options
+Development Build (Fast, Dynamic Linking)
+bash# Quick build for development/debugging
+# Creates smaller exe but requires DLL files
+build_dev.bat
+Output: build/dev/bin/Debug/BilateralMeshDenoiser.exe + DLL files
+Use case: Development, debugging, algorithm testing
+Release Build (Standalone, Static Linking)
+bash# Standalone executable for deployment
+# Takes longer to build but creates portable exe
+build_release.bat
+Output: deploy/BilateralMeshDenoiser.exe (standalone, ~30-50MB)
+Use case: Production deployment, distribution to artists
+Quick Start (Windows)
+bash# 1. Clone repository
 git clone https://github.com/JaewonSongJ1/Dynamic3dMeshDenoiser.git
 cd Dynamic3dMeshDenoiser
 
 # 2. Setup vcpkg (if not already installed)
 git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
-C:\vcpkg\bootstrap-vcpkg.bat  
-C:\vcpkg\vcpkg integrate install
+C:\vcpkg\bootstrap-vcpkg.bat
+set VCPKG_ROOT=C:\vcpkg
 
-# 3. Install dependencies
-C:\vcpkg\vcpkg install alembic:x64-windows
-
-# 4. Build the project
-build.bat
-
-# 5. Test installation
-cd build\Release
-BilateralMeshDenoiser.exe -h
-TemporalMeshDenoiser.exe -h
-```
-
-### Linux/macOS Installation
-```bash
-# 1. Clone repository
+# 3. Development build (fast)
+build_dev.bat
+Production Deployment
+bash# 1. Clone repository (on build machine)
 git clone https://github.com/JaewonSongJ1/Dynamic3dMeshDenoiser.git
 cd Dynamic3dMeshDenoiser
 
-# 2. Install dependencies (Ubuntu/Debian)
+# 2. Release build (standalone)
+build_release.bat
+
+# 3. Distribute the deploy/ folder to all workstations
+# No additional setup required on target machines
+Manual Installation (Advanced)
+Windows
+bash# 1. Install vcpkg dependencies
+%VCPKG_ROOT%\vcpkg install alembic:x64-windows        # For development
+%VCPKG_ROOT%\vcpkg install alembic:x64-windows-static # For deployment
+
+# 2. Configure build
+mkdir build && cd build
+cmake .. -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake ^
+         -DVCPKG_TARGET_TRIPLET=x64-windows -DCMAKE_BUILD_TYPE=Release
+
+# 3. Build
+cmake --build . --config Release
+Linux/macOS
+bash# 1. Install dependencies (Ubuntu/Debian)
 sudo apt-get update
 sudo apt-get install cmake build-essential libalembic-dev
 
-# 3. Build
+# 2. Build
 mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j$(nproc)
+Troubleshooting
+Common Issues
+❌ "VCPKG_ROOT environment variable is not set"
+bash# Solution: Set environment variable
+set VCPKG_ROOT=C:\vcpkg
+❌ "Alembic not found"
+bash# Solution: Install dependencies
+%VCPKG_ROOT%\vcpkg install alembic:x64-windows
+%VCPKG_ROOT%\vcpkg install alembic:x64-windows-static
+❌ "Build failed - Runtime library mismatch"
+bash# Solution: Clean build
+build_release.bat clean
+build_release.bat
+❌ "Visual Studio not found"
 
-# 4. Test
-./BilateralMeshDenoiser -h
-./TemporalMeshDenoiser -h
-```
+Install Visual Studio 2022 with C++ development tools
+Or use Visual Studio Build Tools 2022
+
+Build Verification
+bash# Test development build
+build\dev\bin\Debug\BilateralMeshDenoiser.exe -h
+
+# Test release build  
+deploy\BilateralMeshDenoiser.exe -h
+Build Performance
+Build TypeTimeOutput SizeDependenciesDevelopment~30 seconds~2MB + DLLsRequires vcpkgRelease~5 minutes~45MBStandalone
 
 ## 🚀 Usage Examples
 
