@@ -1,10 +1,82 @@
-# Build directories 
-build/ 
-out/ 
- 
-# Visual Studio 
-.vs/ 
-*.vcxproj.user 
-*.exe 
-*.pdb 
-*.obj 
+# Build directories
+build/
+build_dev/
+build_release/
+out/
+bin/
+Debug/
+Release/
+
+# Deployment folder
+deploy/
+
+# Visual Studio files
+.vs/
+*.vcxproj
+*.vcxproj.user
+*.vcxproj.filters
+*.sln
+*.sln.docstates
+*.suo
+*.user
+*.userosscache
+
+# Compiled binaries
+*.exe
+*.dll
+*.lib
+*.obj
+*.pdb
+*.ilk
+*.exp
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+
+# vcpkg
+vcpkg_installed/
+packages/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+*.bak
+*.orig
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test files
+test_data/
+test_output/
+*.abc
+!examples/*.abc
+
+# User-specific configuration
+config.local
+.env.local
+
+# Performance profiling files
+*.prof
+*.perf
