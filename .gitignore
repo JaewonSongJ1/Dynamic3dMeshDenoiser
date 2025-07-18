@@ -1,5 +1,7 @@
 # Build directories
 build/
+build_dev/
+build_release/
 out/
 bin/
 Debug/
@@ -10,13 +12,14 @@ deploy/
 
 # Visual Studio files
 .vs/
+*.vcxproj
 *.vcxproj.user
 *.vcxproj.filters
+*.sln
 *.sln.docstates
 *.suo
 *.user
 *.userosscache
-*.sln.docstates
 
 # Compiled binaries
 *.exe
