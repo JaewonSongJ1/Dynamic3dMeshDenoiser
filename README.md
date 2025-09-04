@@ -187,6 +187,14 @@ pyinstaller ^
 
 ---
 
+## 개발자
+
+- 소속: Dexter Studios(https://dexterstudios.com)
+- 개발자 : Jaewon Song(Head of R&D, jaewon.song@dexterstudios.com)
+
+
+---
+
 ## 라이선스/크레딧
 
 - 라이선스: MIT (루트 `LICENSE` 파일 추가를 권장합니다)
