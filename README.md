@@ -1,315 +1,204 @@
 # Dynamic 3D Mesh Denoiser
 
-**High-Performance 4D Mesh Denoising Toolkit for Production Pipelines**
+**프로덕션용 4D/동적 메쉬 디노이징 툴킷**
 
-*Professional-grade temporal mesh denoising for standalone processing*
-
-Dynamic 3D Mesh Denoiser is a high-performance C++ toolkit designed for denoising temporal mesh sequences from 4D scanning, motion capture, and simulation data. This standalone solution processes Alembic (.abc) files directly, providing professional-grade denoising capabilities for production pipelines.
-
-## 🌟 Key Features
-
-- **🚀 High Performance**: Optimized C++ implementation with multi-threading support
-- **🎛️ Multiple Algorithms**: Bilateral filtering and temporal smoothing with extensible architecture
-- **📁 Standalone Processing**: Direct Alembic file processing, no external dependencies
-- **🔧 Production Ready**: Handles large-scale 4D datasets (24K+ vertices, 1600+ frames)
-- **⚡ Multi-threaded**: OpenMP support for parallel processing
-- **🎯 Adaptive Processing**: Motion-aware denoising with edge preservation
-- **💾 Memory Efficient**: Optimized for large temporal datasets
-- **🛠️ Command-Line Interface**: Easy integration into production pipelines
-
-## 🎯 Use Cases
-
-- **4D Face Scanning**: Remove noise from high-resolution facial capture data
-- **Motion Capture Cleanup**: Smooth temporal artifacts in mocap sequences
-- **Simulation Post-Processing**: Clean up cloth, fluid, and soft-body simulations
-- **Animation Polishing**: Remove jitter from keyframe animation
-- **Research & Development**: Prototype new denoising algorithms
-
-## 📁 Project Structure
-
-```
-dynamic_3dmesh_denoiser/
-│
-├── 📂 src/                           # Core engine source code
-│   ├── BilateralMeshDenoiser.cpp     # Bilateral temporal filtering implementation ⭐
-│   └── TemporalMeshDenoiser.cpp      # Temporal smoothing implementation ⭐ NEW
-│
-├── 📂 build/                         # Build directory (generated)
-│   └── Release/
-│       ├── BilateralMeshDenoiser.exe # Bilateral filtering executable
-│       └── TemporalMeshDenoiser.exe  # Temporal smoothing executable
-│
-├── 📂 examples/                      # Example files and test data
-│   ├── sample_input.abc              # Sample input mesh sequence
-│   └── sample_output.abc             # Expected output after denoising
-│
-├── 📄 CMakeLists.txt                 # CMake build configuration
-├── 📄 build.bat                      # Windows build script
-└── 📄 README.md                      # This file
-```
-
-## 🔬 Denoising Algorithms
-
-| Algorithm | Status | Performance | Quality | Use Case |
-|-----------|--------|-------------|---------|----------|
-| **Bilateral Temporal Filter** | ✅ Production Ready | Medium | Excellent | General-purpose, production workflows |
-| **Temporal Smoothing Filter** | ✅ Production Ready | Fast | Good | Quick previews, light denoising |
-| Advanced Edge-Preserving | 📋 Planned | Medium | Superior | High-detail preservation scenarios |
-
-### 1. Bilateral Temporal Filter (`BilateralMeshDenoiser.exe`)
-- **Advanced algorithm** with motion-aware denoising and edge preservation
-- **Adaptive windowing** based on motion analysis
-- **Best for**: Heavy noise reduction, final production quality
-- **Performance**: 24K vertices × 1620 frames in ~2.4 seconds
-
-### 2. Temporal Smoothing Filter (`TemporalMeshDenoiser.exe`) ⭐ **NEW**
-- **Simple temporal averaging** with linear or gaussian weighting
-- **FPS-aware auto window sizing**: Automatically detects frame rate and adjusts window size
-- **Smart defaults**: 24fps→window 3, 60fps→window 5, 120fps+→window 7
-- **Best for**: Quick denoising, preview workflows, light touch-ups
-- **Performance**: 24K vertices × 1620 frames in ~0.8 seconds
-
-🚀 Installation & Build
-Prerequisites
-
-Windows 10/11 (64-bit) or Linux/macOS
-Visual Studio 2022 (Windows) or GCC 7+/Clang 8+ (Linux/macOS)
-CMake 3.16+
-vcpkg (for dependency management)
-Git
-
-Environment Setup
-Important: Set VCPKG_ROOT environment variable before building.
-Method 1: System Environment Variable (Recommended)
-
-Windows + R → sysdm.cpl → Enter
-"Advanced" Tab → "Environment Variables"
-Add System Variable: VCPKG_ROOT=C:\vcpkg
-
-Method 2: Current Session
-bashset VCPKG_ROOT=C:\vcpkg
-Build Options
-Development Build (Fast, Dynamic Linking)
-bash# Quick build for development/debugging
-# Creates smaller exe but requires DLL files
-build_dev.bat
-Output: build/dev/bin/Debug/BilateralMeshDenoiser.exe + DLL files
-Use case: Development, debugging, algorithm testing
-Release Build (Standalone, Static Linking)
-bash# Standalone executable for deployment
-# Takes longer to build but creates portable exe
-build_release.bat
-Output: deploy/BilateralMeshDenoiser.exe (standalone, ~30-50MB)
-Use case: Production deployment, distribution to artists
-Quick Start (Windows)
-bash# 1. Clone repository
-git clone https://github.com/JaewonSongJ1/Dynamic3dMeshDenoiser.git
-cd Dynamic3dMeshDenoiser
-
-# 2. Setup vcpkg (if not already installed)
-git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
-C:\vcpkg\bootstrap-vcpkg.bat
-set VCPKG_ROOT=C:\vcpkg
-
-# 3. Development build (fast)
-build_dev.bat
-Production Deployment
-bash# 1. Clone repository (on build machine)
-git clone https://github.com/JaewonSongJ1/Dynamic3dMeshDenoiser.git
-cd Dynamic3dMeshDenoiser
-
-# 2. Release build (standalone)
-build_release.bat
-
-# 3. Distribute the deploy/ folder to all workstations
-# No additional setup required on target machines
-Manual Installation (Advanced)
-Windows
-bash# 1. Install vcpkg dependencies
-%VCPKG_ROOT%\vcpkg install alembic:x64-windows        # For development
-%VCPKG_ROOT%\vcpkg install alembic:x64-windows-static # For deployment
-
-# 2. Configure build
-mkdir build && cd build
-cmake .. -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake ^
-         -DVCPKG_TARGET_TRIPLET=x64-windows -DCMAKE_BUILD_TYPE=Release
-
-# 3. Build
-cmake --build . --config Release
-Linux/macOS
-bash# 1. Install dependencies (Ubuntu/Debian)
-sudo apt-get update
-sudo apt-get install cmake build-essential libalembic-dev
-
-# 2. Build
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j$(nproc)
-Troubleshooting
-Common Issues
-❌ "VCPKG_ROOT environment variable is not set"
-bash# Solution: Set environment variable
-set VCPKG_ROOT=C:\vcpkg
-❌ "Alembic not found"
-bash# Solution: Install dependencies
-%VCPKG_ROOT%\vcpkg install alembic:x64-windows
-%VCPKG_ROOT%\vcpkg install alembic:x64-windows-static
-❌ "Build failed - Runtime library mismatch"
-bash# Solution: Clean build
-build_release.bat clean
-build_release.bat
-❌ "Visual Studio not found"
-
-Install Visual Studio 2022 with C++ development tools
-Or use Visual Studio Build Tools 2022
-
-Build Verification
-bash# Test development build
-build\dev\bin\Debug\BilateralMeshDenoiser.exe -h
-
-# Test release build  
-deploy\BilateralMeshDenoiser.exe -h
-Build Performance
-Build TypeTimeOutput SizeDependenciesDevelopment~30 seconds~2MB + DLLsRequires vcpkgRelease~5 minutes~45MBStandalone
-
-## 🚀 Usage Examples
-
-### Basic Usage
-```bash
-# Bilateral filtering (production quality)
-BilateralMeshDenoiser.exe input.abc output.abc
-
-# Temporal smoothing (fast preview)
-TemporalMeshDenoiser.exe input.abc output.abc
-```
-
-### Frame Range Processing
-```bash
-# Process specific frame range (1-based Maya frames)
-BilateralMeshDenoiser.exe input.abc output.abc --maya-range 1 100
-TemporalMeshDenoiser.exe input.abc output.abc --maya-range 1 100
-
-# Process specific Alembic frame range (0-based)
-BilateralMeshDenoiser.exe input.abc output.abc --sf 0 --ef 99
-TemporalMeshDenoiser.exe input.abc output.abc --start-frame 0 --end-frame 99
-```
-
-### Temporal Denoiser Specific Options
-```bash
-# Auto window size based on detected FPS (default)
-TemporalMeshDenoiser.exe input.abc output.abc --maya-range 1 100
-
-# Manual window size (overrides auto-detection)
-TemporalMeshDenoiser.exe input.abc output.abc --window 7
-
-# Gaussian weighting (smoother for larger windows)
-TemporalMeshDenoiser.exe input.abc output.abc --weight gaussian --sigma 1.5
-
-# Linear weighting (faster, good for small windows)
-TemporalMeshDenoiser.exe input.abc output.abc --weight linear
-```
-
-### Advanced Bilateral Denoiser Options
-```bash
-# Ultra-strong denoising (maximum smoothing)
-BilateralMeshDenoiser.exe input.abc output.abc --maya-range 1 100 \
-    --window 15 --sigma-temporal 5.0 --sigma-spatial 0.35
-
-# Medium denoising (balanced)
-BilateralMeshDenoiser.exe input.abc output.abc --maya-range 1 100 \
-    --window 9 --sigma-temporal 2.5 --sigma-spatial 0.15
-
-# Subtle denoising (detail preservation)
-BilateralMeshDenoiser.exe input.abc output.abc --maya-range 1 100 \
-    --window 7 --sigma-temporal 1.5 --sigma-spatial 0.08
-```
-
-## ⚙️ Parameter Guidelines
-
-### Temporal Denoiser Parameters
-| Parameter | Range | Default | Effect |
-|-----------|-------|---------|--------|
-| `--window` | 3-9 | Auto (FPS-based) | Temporal smoothing strength |
-| `--weight` | linear/gaussian | linear | Weighting function |
-| `--sigma` | 0.5-3.0 | 1.0 | Gaussian standard deviation |
-
-### FPS-Based Auto Window Sizing
-The Temporal Denoiser automatically detects FPS and adjusts window size:
-- **24fps** (cinema): window 3 (~0.125s temporal coverage)
-- **30fps** (video): window 3 (~0.100s temporal coverage)  
-- **60fps** (high-fps): window 5 (~0.083s temporal coverage)
-- **120fps+** (ultra): window 7 (~0.058s temporal coverage)
-
-*Manual `--window` setting overrides auto-detection*
-
-### Bilateral Denoiser Parameters
-| Parameter | Range | Default | Recommendation |
-|-----------|-------|---------|----------------|
-| `--window` | 5-15 | 15 | 15 (default), 9 (medium), 5 (subtle) |
-| `--sigma-temporal` | 1.0-5.0 | 4.0 | 4.0 (default), 2.5 (medium), 1.0 (sharp) |
-| `--sigma-spatial` | 0.05-0.35 | 0.25 | 0.25 (default), 0.15 (medium), 0.05 (preserve detail) |
-| `--motion-thresh` | 0.02-0.15 | 0.1 | 0.1 (default), 0.05 (sensitive), 0.15 (relaxed) |
-| `--edge-thresh` | 0.05-0.2 | 0.15 | 0.15 (default), 0.1 (preserve), 0.2 (smooth) |
-
-## 📊 Performance Benchmarks
-
-**Test Case**: 24,049 vertices × 1,620 frames (4D facial scan)
-
-| Algorithm | Processing Time | Memory Usage | Throughput |
-|-----------|----------------|--------------|------------|
-| **Temporal Denoiser** | ~0.8 seconds | ~45 MB | Very Fast |
-| **Bilateral Denoiser** | ~2.4 seconds | ~680 MB | Production Grade |
-
-## 🔬 Algorithm Details
-
-### Temporal Smoothing Algorithm
-Simple and effective temporal averaging with configurable weighting:
-- **Linear weighting**: Higher weight at center, linearly decreasing to edges
-- **Gaussian weighting**: Smooth falloff based on temporal distance
-- **Normalized weights**: Ensures mesh scale preservation
-- **FPS awareness**: Automatically adjusts temporal window based on frame rate
-
-### Bilateral Temporal Algorithm
-Advanced denoising combining spatial and temporal information:
-- **Adaptive Windowing**: Dynamic window sizing based on motion analysis
-- **Edge Preservation**: Motion-aware edge detection prevents over-smoothing
-- **Multi-threaded Processing**: OpenMP parallelization for vertex-level operations
-- **Memory Optimization**: Efficient frame loading and processing
-
-## 🤝 Contributing
-
-**Jaewon Song**  
-R&D Director, Dexter Studios
-- 🏢 Company: [Dexter Studios](http://www.dexterstudios.com/)
-- 🎓 Expertise: Computer Graphics, 3D Pipeline Development, High-Performance Computing
-- 🔬 Research Focus: Digital human, facial performance capture & retargeting, dynamic 3D scanning, AI-driven content creation
-- 📧 Contact: [jaewon.song@dexterstudios.com](mailto:jaewon.song@dexterstudios.com)
-- 💼 LinkedIn: [linkedin.com/in/jaewonsongj1](https://www.linkedin.com/in/jaewonsongj1/)
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-We welcome contributions from the community! Whether you're from a VFX studio, research institution, or independent developer:
-
-- **Issues**: Report bugs or request features via [GitHub Issues](https://github.com/JaewonSongJ1/Dynamic3dMeshDenoiser/issues)
-- **Discussions**: Join technical discussions in [GitHub Discussions](https://github.com/JaewonSongJ1/Dynamic3dMeshDenoiser/discussions)
-
-### Contributing Guidelines
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-algorithm`)
-3. Commit your changes (`git commit -m 'Add amazing denoising algorithm'`)
-4. Push to the branch (`git push origin feature/amazing-algorithm`)
-5. Open a Pull Request
-
-## 🙏 Acknowledgments
-
-- **Minyeong Jeong**: Dynamic 3D mesh device development and hardware integration
+Dynamic 3D Mesh Denoiser는 4D 스캔·모션캡처·시뮬레이션 등에서 생성된 **시간적 메쉬 시퀀스(Alembic .abc)**의 노이즈를 제거하는 고성능 C++/Standalone 도구입니다. **Bilateral(프로덕션 퀄리티)** 및 **Temporal(고속 프리뷰)** 필터를 제공하며, **단독 UI**(Dynamic3DMeshDenoiser.exe)로도 실행할 수 있습니다.
 
 ---
 
-**Professional 4D Mesh Denoising Made Simple** 🎬✨
+## 주요 기능
 
-*Empowering creators with production-grade tools*
+- **고성능**: C++/OpenMP 병렬화 기반. 대규모 프레임·버텍스 처리에 최적화.
+- **2가지 알고리즘**
+  - **Bilateral Temporal Filter**: 에지 보존·모션 인지 기반 고품질 디노이징(프로덕션 최종 결과에 적합).
+  - **Temporal Smoothing Filter**: 선형/가우시안 가중치 기반의 단순·고속 프리뷰.
+- **Standalone 파이프라인**: Alembic(.abc) 직접 입력/출력. 외부 DCC 의존성 최소화.
+- **대용량 처리**: 프로덕션 규모 데이터 처리에 대응.
+- **UI 제공**: `deploy/Dynamic3DMeshDenoiser.exe` 단일 실행 파일(PyInstaller 빌드).
 
-Built with ❤️ by [Dexter Studios](https://www.dexterstudios.com/) R&D Team
+---
+
+## 폴더 구조(요약)
+
+```
+Dynamic3dMeshDenoiser/
+├─ build/                     # PyInstaller 등 빌드 중간물
+│  └─ ui/...
+├─ build_release/             # CMake/VS 솔루션 및 Release 산출물
+│  └─ Release/
+│     ├─ BilateralMeshDenoiser.exe
+│     └─ TemporalMeshDenoiser.exe
+├─ deploy/                    # 최종 배포물 (실행 파일 모음)
+│  ├─ BilateralMeshDenoiser.exe
+│  ├─ TemporalMeshDenoiser.exe
+│  ├─ Dynamic3DMeshDenoiser.exe   # ← UI 실행 파일
+│  └─ how_to_use.txt
+├─ example/
+│  └─ noisy_input.abc         # 샘플 입력 (테스트용)
+├─ src/
+│  ├─ BilateralMeshDenoiser.cpp
+│  └─ TemporalMeshDenoiser.cpp
+└─ ui/
+   └─ dynamic3dmesh_denoiser_ui.py
+```
+
+> 루트에는 `build_dev.bat`, `build_release.bat`, `CMakeLists.txt` 등이 존재합니다.
+
+---
+
+## 빌드/설치
+
+### 1) 전제조건
+- Windows 10/11 (x64)
+- Visual Studio 2022 (C++ Desktop), CMake 3.16+
+- (선택) vcpkg 사용 시 `VCPKG_ROOT` 세팅 권장
+- Python 3.10+ (UI 빌드용, PyQt5/pyinstaller 필요)
+
+### 2) C++ 엔진 빌드(개발/릴리즈)
+
+- **개발(동적 링크·빠른 빌드)**
+  ```bat
+  build_dev.bat
+  ```
+  - 용도: 개발/디버그/알고리즘 테스트
+
+- **릴리즈(배포용)**
+  ```bat
+  build_release.bat
+  ```
+  - 산출물: `build_release/Release/BilateralMeshDenoiser.exe`, `build_release/Release/TemporalMeshDenoiser.exe`
+  - 일반적으로 위 두 파일을 `deploy/`에 복사하여 배포합니다.
+
+### 3) UI 빌드(Windows, PyInstaller)
+
+UI는 `deploy/`의 엔진 실행 파일을 기준으로 동작합니다. PyInstaller로 **단일 exe**를 배포 폴더에 직접 생성합니다.
+
+```bat
+cd ui
+pip install pyinstaller PyQt5
+
+pyinstaller ^
+  --noconfirm ^
+  --onefile ^
+  --windowed ^
+  --name Dynamic3DMeshDenoiser ^
+  --distpath ..\deploy ^
+  --workpath ..\\build\\ui ^
+  --specpath ..\\build\\ui ^
+  --collect-submodules PyQt5 ^
+  dynamic3dmesh_denoiser_ui.py
+```
+
+- 산출물: `deploy/Dynamic3DMeshDenoiser.exe`
+- 실행 파일 탐색 우선순위(내장 로직):  
+  `D3MD_BIN` 환경변수 폴더 > (frozen) UI exe가 위치한 폴더(`deploy/`) > (소스 실행 시) `<repo_root>/deploy/`
+
+---
+
+## 실행 방법
+
+### 1) UI(권장)
+1. `deploy/Dynamic3DMeshDenoiser.exe` 실행
+2. **Input**: 예) `example/noisy_input.abc`
+3. **Output**: 예) `example/noisy_output.abc`
+4. 알고리즘 선택
+   - **Bilateral Mesh Denoiser**(프로덕션)
+   - **Temporal Mesh Denoiser**(고속 프리뷰)
+5. 필요 시 **Advanced Options** 활성화 후 파라미터 조정
+6. **Process Denoising** 실행
+
+> 프레임 범위는 Maya 기준(1-based) 또는 내부 옵션으로 지정할 수 있습니다.
+
+### 2) CLI(엔진 단독)
+
+- **기본 사용**
+  ```bat
+  BilateralMeshDenoiser.exe input.abc output.abc
+  TemporalMeshDenoiser.exe input.abc output.abc
+  ```
+
+- **프레임 범위 (Maya 1-based)**
+  ```bat
+  BilateralMeshDenoiser.exe input.abc output.abc --maya-range 1 100
+  TemporalMeshDenoiser.exe input.abc output.abc --maya-range 1 100
+  ```
+
+- **프레임 범위 (Alembic 0-based)**
+  ```bat
+  BilateralMeshDenoiser.exe input.abc output.abc --sf 0 --ef 99
+  TemporalMeshDenoiser.exe input.abc output.abc --start-frame 0 --end-frame 99
+  ```
+
+- **Temporal 전용 옵션**
+  ```bat
+  TemporalMeshDenoiser.exe input.abc output.abc --window 7
+  TemporalMeshDenoiser.exe input.abc output.abc --weight gaussian --sigma 1.5
+  ```
+
+- **Bilateral 고급 예시**
+  ```bat
+  BilateralMeshDenoiser.exe input.abc output.abc ^
+    --maya-range 1 100 --window 15 --sigma-temporal 5.0 --sigma-spatial 0.35
+  ```
+
+---
+
+## 파라미터 가이드(요지)
+
+- **Temporal**
+  - `--window`: 시간 윈도우 크기(자동/수동)
+  - `--weight`: `linear` | `gaussian`
+  - `--sigma`: 가우시안 표준편차(가중치용)
+
+- **Bilateral**
+  - `--window`: 시간 윈도우 크기(권장: 9~15)
+  - `--sigma-temporal`: 시간적 민감도
+  - `--sigma-spatial`: 공간적(에지 보존) 민감도
+
+세부 권장값과 프리셋(예: subtle/medium/strong)은 UI 프리셋 또는 위의 CLI 예시를 참고하세요.
+
+---
+
+## 예제
+
+- 입력: `example/noisy_input.abc`
+- 출력: `example/noisy_output.abc` (사용자 지정)
+- UI 또는 CLI로 동일하게 처리 가능. (예제 .abc는 용량·형식에 따라 처리 시간이 달라질 수 있음)
+
+---
+
+## 트러블슈팅
+
+- **UI가 “아무 말 없이 종료”되는 것처럼 보임**
+  - PyInstaller `--windowed` 빌드에서는 미처리 예외가 콘솔에 보이지 않을 수 있습니다.
+  - 해결:
+    - 소스 실행(`python ui\\dynamic3dmesh_denoiser_ui.py`)로 콘솔 로그 확인
+    - 또는 `--windowed` 대신 `--console`로 빌드하여 예외 출력 확인
+    - UI 코드에 전역 `sys.excepthook` 설치하여 메시지 박스로 예외 표시(권장)
+  - 탭 위젯에서 메인윈도우 메서드 호출 시에는 `self.window().execute_command(...)` 형태로 접근하십시오.
+
+- **엔진 실행 파일 탐색 실패**
+  - `deploy/`에 `BilateralMeshDenoiser.exe`, `TemporalMeshDenoiser.exe`, `Dynamic3DMeshDenoiser.exe` 존재 확인
+  - 외부 경로 사용 시 `D3MD_BIN` 환경변수로 폴더 지정 가능
+
+- **Alembic 버전/포맷 이슈**
+  - 0-based/1-based 프레임 처리 옵션(`--sf/--ef`, `--maya-range`)을 적절히 사용
+  - 데이터 스펙(프레임 수, fps, topology consistency)에 따라 파라미터 튜닝 필요
+
+---
+
+## 라이선스/크레딧
+
+- 라이선스: MIT (루트 `LICENSE` 파일 추가를 권장합니다)
+- 기여: 이슈/PR 환영. (Dexter Studios R&D)
+
+---
+
+## 변경 사항 요약(이번 업데이트)
+
+- **UI 분리/정리**: “Alembic Denoise” 단일 창 UI → `deploy/Dynamic3DMeshDenoiser.exe`
+- **경로 규칙 통일**: 실행 파일 탐색을 `deploy/` 기준으로 일원화 (`D3MD_BIN` > deploy > PATH)
+- **예제 추가**: `example/noisy_input.abc` 테스트 경로 명시
+- **배포 빌드 가이드**: PyInstaller 옵션을 `deploy/` 산출로 정리
+
+_문서 버전: 2025-09-04 (KST)_
